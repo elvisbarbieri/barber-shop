@@ -52,7 +52,6 @@ module apimBackend './modules/apimBackend.bicep' = {
   name: 'apimBackend'
   params: {
     apimServiceName: apimServiceName
-    functionAppName: functionAppName
     functionAppResourceId: functionApp.outputs.functionAppResourceId
     functionAppHostName: functionApp.outputs.functionAppHostName
     backendId: 'barberdist-backend'
@@ -72,6 +71,7 @@ module apimApis './modules/apimApis.bicep' = {
   }
   dependsOn: [
     apimBackend
+    functionApp
   ]
 }
 

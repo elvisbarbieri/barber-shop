@@ -1,5 +1,4 @@
 param apimServiceName string
-param functionAppName string
 param functionAppResourceId string
 param functionAppHostName string
 param backendId string

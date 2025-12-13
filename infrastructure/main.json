@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.39.26.7824",
-      "templateHash": "6994033710000281007"
+      "templateHash": "1587867438993849190"
     }
   },
   "parameters": {
@@ -436,9 +436,6 @@
           "apimServiceName": {
             "value": "[variables('apimServiceName')]"
           },
-          "functionAppName": {
-            "value": "[variables('functionAppName')]"
-          },
           "functionAppResourceId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'functionApp'), '2025-04-01').outputs.functionAppResourceId.value]"
           },
@@ -456,14 +453,11 @@
             "_generator": {
               "name": "bicep",
               "version": "0.39.26.7824",
-              "templateHash": "255683432215002431"
+              "templateHash": "15272562186477137800"
             }
           },
           "parameters": {
             "apimServiceName": {
-              "type": "string"
-            },
-            "functionAppName": {
               "type": "string"
             },
             "functionAppResourceId": {
