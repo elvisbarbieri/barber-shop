@@ -64,11 +64,30 @@ cd infrastructure
 
 ### 3.2 Deploy Infrastructure
 
+**Option 1: Using Bicep parameters file (if supported):**
 ```bash
 az deployment group create \
   --resource-group rg-barberdist-dev \
   --template-file main.bicep \
   --parameters @parameters.dev.bicepparam \
+  --verbose
+```
+
+**Option 2: Using JSON parameters file (recommended):**
+```bash
+az deployment group create \
+  --resource-group rg-barberdist-dev \
+  --template-file main.bicep \
+  --parameters @parameters.dev.json \
+  --verbose
+```
+
+**Option 3: Inline parameters:**
+```bash
+az deployment group create \
+  --resource-group rg-barberdist-dev \
+  --template-file main.bicep \
+  --parameters projectName=barberdist environment=dev location=eastus \
   --verbose
 ```
 

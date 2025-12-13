@@ -19,7 +19,15 @@ cd infrastructure
 az deployment group create \
   --resource-group rg-barberdist-dev \
   --template-file main.bicep \
-  --parameters @parameters.dev.bicepparam
+  --parameters @parameters.dev.json
+```
+
+Or with inline parameters:
+```bash
+az deployment group create \
+  --resource-group rg-barberdist-dev \
+  --template-file main.bicep \
+  --parameters projectName=barberdist environment=dev location=eastus
 ```
 
 ### 4. Deploy Function App Code
