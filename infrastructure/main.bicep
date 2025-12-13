@@ -5,7 +5,9 @@ param projectName string = 'barberdist'
 param environment string = 'dev'
 
 var functionAppName = '${projectName}-func-${environment}'
-var storageAccountName = '${replace(projectName, '-', '')}st${uniqueString(resourceGroup().id)}'
+var storageAccountPrefix = substring(replace(projectName, '-', ''), 0, min(10, length(replace(projectName, '-', ''))))
+var storageAccountSuffix = substring(uniqueString(resourceGroup().id), 0, 13)
+var storageAccountName = '${storageAccountPrefix}${storageAccountSuffix}'
 var appServicePlanName = '${projectName}-plan-${environment}'
 var apimServiceName = '${projectName}-apim-${environment}'
 var apimBaseUrl = projectName

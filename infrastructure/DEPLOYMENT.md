@@ -3,6 +3,7 @@
 ## Prerequisites Checklist
 
 - [ ] Azure subscription with contributor permissions
+- [ ] **Subscription quota for Consumption plan** (request if needed - see Troubleshooting section)
 - [ ] Azure CLI installed (`az --version`)
 - [ ] Logged into Azure (`az login`)
 - [ ] Bicep CLI available (`az bicep version`)

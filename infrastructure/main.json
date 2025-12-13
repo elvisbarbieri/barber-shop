@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.39.26.7824",
-      "templateHash": "1587867438993849190"
+      "templateHash": "5373357346405448911"
     }
   },
   "parameters": {
@@ -24,7 +24,9 @@
   },
   "variables": {
     "functionAppName": "[format('{0}-func-{1}', parameters('projectName'), parameters('environment'))]",
-    "storageAccountName": "[format('{0}st{1}', replace(parameters('projectName'), '-', ''), uniqueString(resourceGroup().id))]",
+    "storageAccountPrefix": "[substring(replace(parameters('projectName'), '-', ''), 0, min(10, length(replace(parameters('projectName'), '-', ''))))]",
+    "storageAccountSuffix": "[substring(uniqueString(resourceGroup().id), 0, 13)]",
+    "storageAccountName": "[format('{0}{1}', variables('storageAccountPrefix'), variables('storageAccountSuffix'))]",
     "appServicePlanName": "[format('{0}-plan-{1}', parameters('projectName'), parameters('environment'))]",
     "apimServiceName": "[format('{0}-apim-{1}', parameters('projectName'), parameters('environment'))]",
     "apimBaseUrl": "[parameters('projectName')]"
