@@ -1,7 +1,6 @@
 param name string
 param location string
 param baseUrl string
-param environment string
 param publisherName string = 'Distrito Barbearia'
 param publisherEmail string = 'admin@distritobarbearia.com'
 param sku string = 'Consumption'

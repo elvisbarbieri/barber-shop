@@ -8,10 +8,6 @@ resource apimService 'Microsoft.ApiManagement/service@2023-05-01-preview' existi
   name: apimServiceName
 }
 
-resource functionApp 'Microsoft.Web/sites@2023-01-01' existing = {
-  name: functionAppName
-}
-
 resource backend 'Microsoft.ApiManagement/service/backends@2023-05-01-preview' = {
   parent: apimService
   name: backendId

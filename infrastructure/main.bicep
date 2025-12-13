@@ -33,11 +33,9 @@ module functionApp './modules/functionApp.bicep' = {
     location: location
     storageAccountName: storageAccountName
     appServicePlanId: appServicePlan.outputs.appServicePlanId
-    environment: environment
   }
   dependsOn: [
     storageAccount
-    appServicePlan
   ]
 }
 
@@ -47,7 +45,6 @@ module apiManagement './modules/apiManagement.bicep' = {
     name: apimServiceName
     location: location
     baseUrl: apimBaseUrl
-    environment: environment
   }
 }
 
@@ -75,7 +72,6 @@ module apimApis './modules/apimApis.bicep' = {
   }
   dependsOn: [
     apimBackend
-    apiManagement
   ]
 }
 
