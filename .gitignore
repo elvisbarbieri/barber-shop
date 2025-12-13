@@ -53,3 +53,15 @@ __pycache__/
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
+
+# Shell scripts and deployment files
+*.sh
+startup-*.sh
+deploy-*.sh
+*.key
+*.pem
+*.p12
+*.pfx
+*secret*
+*password*
+*credential*
