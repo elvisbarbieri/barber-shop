@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "DATABASE": "distrito-barber",
+    "COLLECTION_CHECKIN": "distritobarber",
+    "COSMOS_CONNECTION_STRING": "your-cosmos-db-connection-string-here",
+    "GMAIL_USER": "your-email@gmail.com",
+    "GMAIL_APP_PASSWORD": "your-gmail-app-password-here"
+  }
+}
+

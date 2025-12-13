@@ -1,0 +1,30 @@
+[
+    {
+      "id": 1,
+      "name": "Guilherme",
+      "specialty": "Cortes Clássicos & Barba Tradicional",
+      "bio": "Com um olho para detalhes, Guilherme combina técnicas tradicionais com um toque moderno para criar o visual perfeito.",
+      "imageUrl": "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328516.jpg?v=20250204143100"
+    },
+    {
+      "id": 2,
+      "name": "Gustavo \"Picote\"",
+      "specialty": "Fades Modernos & Desenhos",
+      "bio": "Picote é conhecido por seus fades impecáveis e sua habilidade em criar desenhos detalhados e artísticos no cabelo.",
+      "imageUrl": "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328517.jpg?v=20241114150700"
+    },
+    {
+      "id": 3,
+      "name": "Pardim",
+      "specialty": "Estilização Criativa & Versatilidade",
+      "bio": "Pardim é o profissional ideal para quem busca um novo visual, sempre antenado com as últimas tendências do momento.",
+      "imageUrl": "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328518.jpg?v=20250410171600"
+    },
+    {
+      "id": 4,
+      "name": "Luiz \"Pépe\"",
+      "specialty": "Expert em Cabelo & Barba",
+      "bio": "Pépe tem uma paixão por transformar visuais, cuidando tanto do cabelo quanto da barba com um nível de maestria inigualável.",
+      "imageUrl": "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000483004.jpg?v=20250407180600"
+    }
+  ]

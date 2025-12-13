@@ -1,0 +1,808 @@
+openapi: 3.0.3
+info:
+  title: Distrito Barbearia API
+  description: API for managing barbers, services, and appointments at Distrito Barbearia
+  version: 1.0.0
+  contact:
+    name: API Support
+servers:
+  - url: http://localhost:7071/api
+    description: Local development server
+  - url: https://{functionApp}.azurewebsites.net/api
+    description: Azure Functions production server
+    variables:
+      functionApp:
+        default: your-function-app-name
+
+paths:
+  /barbers:
+    get:
+      summary: Get available barbers
+      description: Returns a list of all available barbers with their details
+      operationId: getBarbers
+      tags:
+        - Barbers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                success: true
+                data:
+                  - id: 1
+                    name: "Guilherme"
+                    specialty: "Cortes Clássicos & Barba Tradicional"
+                    bio: "Com um olho para detalhes, Guilherme combina técnicas tradicionais com um toque moderno para criar o visual perfeito."
+                    imageUrl: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328516.jpg?v=20250204143100"
+                  - id: 2
+                    name: "Gustavo \"Picote\""
+                    specialty: "Fades Modernos & Desenhos"
+                    bio: "Picote é conhecido por seus fades impecáveis e sua habilidade em criar desenhos detalhados e artísticos no cabelo."
+                    imageUrl: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328517.jpg?v=20241114150700"
+        '404':
+          description: No barbers found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: "BARBERS_NOT_FOUND"
+                  message: "No barbers available"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /services:
+    get:
+      summary: Get available services
+      description: Returns a filtered list of available services. Only returns Combos category, "Apenas Cabelo", and "Apenas Barba" services.
+      operationId: getServices
+      tags:
+        - Services
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicesSuccessResponse'
+              example:
+                success: true
+                data:
+                  - id: 1
+                    name: "Apenas Barba"
+                    price: 45
+                    duration: 30
+                    category: "Barba"
+                  - id: 4
+                    name: "Apenas Cabelo"
+                    price: 45
+                    duration: 45
+                    category: "Cabelo"
+                  - id: 7
+                    name: "Combo 1 (Cabelo e Barba)"
+                    price: 80
+                    duration: 75
+                    category: "Combos"
+                  - id: 8
+                    name: "Combo 2 (Cabelo + Barba + Sobrancelha)"
+                    price: 90
+                    duration: 85
+                    category: "Combos"
+                  - id: 9
+                    name: "Combo 3 (Cabelo + Barba + Sobrancelha + Risco)"
+                    price: 95
+                    duration: 90
+                    category: "Combos"
+        '404':
+          description: No services found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: "SERVICES_NOT_FOUND"
+                  message: "No services available"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /time-slots:
+    post:
+      summary: Get available time slots
+      description: Get available time slots for a specific date and barber. Service ID is optional - if provided, slots will be calculated based on the service duration; if not provided, default 30-minute slots will be used.
+      operationId: getTimeSlots
+      tags:
+        - Time Slots
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeSlotsRequest'
+            examples:
+              withService:
+                value:
+                  date: "2025-01-15"
+                  barberId: 4
+                  serviceId: 7
+              withoutService:
+                value:
+                  date: "2025-01-15"
+                  barberId: 4
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeSlotsSuccessResponse'
+              example:
+                success: true
+                data:
+                  date: "2025-01-15"
+                  availableSlots:
+                    - "09:00 AM"
+                    - "09:45 AM"
+                    - "11:15 AM"
+                    - "12:00 PM"
+                    - "01:30 PM"
+                    - "03:00 PM"
+                    - "03:45 PM"
+                    - "04:30 PM"
+                    - "05:15 PM"
+        '400':
+          description: Validation error or invalid date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  value:
+                    success: false
+                    error:
+                      code: "VALIDATION_ERROR"
+                      message: "Invalid input data"
+                      details:
+                        - field: "date"
+                          message: "Date must be in the future"
+                invalidDate:
+                  value:
+                    success: false
+                    error:
+                      code: "INVALID_DATE"
+                      message: "Date must be in the future"
+        '404':
+          description: Barber or service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                barberNotFound:
+                  value:
+                    success: false
+                    error:
+                      code: "BARBER_NOT_FOUND"
+                      message: "Barber not found"
+                serviceNotFound:
+                  value:
+                    success: false
+                    error:
+                      code: "SERVICE_NOT_FOUND"
+                      message: "Service not found"
+
+  /appointments:
+    post:
+      summary: Create appointment
+      description: Create a new appointment with validation
+      operationId: createAppointment
+      tags:
+        - Appointments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentRequest'
+            example:
+              barberId: 4
+              serviceId: 7
+              date: "2025-01-15"
+              time: "10:30 AM"
+              customerName: "João Silva"
+              customerEmail: "joao.silva@email.com"
+              customerWhatsapp: "(11) 98765-4321"
+              paymentMethod: "later"
+      responses:
+        '201':
+          description: Appointment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentSuccessResponse'
+              example:
+                success: true
+                data:
+                  id: "123"
+                  barber:
+                    id: 4
+                    name: "Luiz \"Pépe\""
+                    specialty: "Expert em Cabelo & Barba"
+                  service:
+                    id: 7
+                    name: "Combo 1 (Cabelo e Barba)"
+                    price: 80
+                    duration: 75
+                  date: "2025-01-15"
+                  time: "10:30 AM"
+                  customerName: "João Silva"
+                  customerEmail: "joao.silva@email.com"
+                  customerWhatsapp: "(11) 98765-4321"
+                  paymentMethod: "later"
+                  status: "confirmed"
+                  createdAt: "2025-01-10T14:30:00Z"
+                  confirmationCode: "ABC123"
+                message: "Appointment created successfully"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              example:
+                success: false
+                error:
+                  code: "VALIDATION_ERROR"
+                  message: "Invalid input data"
+                  details:
+                    - field: "customerEmail"
+                      message: "Invalid email format"
+        '409':
+          description: Conflict - Time slot or barber unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                timeSlotUnavailable:
+                  value:
+                    success: false
+                    error:
+                      code: "TIME_SLOT_UNAVAILABLE"
+                      message: "The selected time slot is not available"
+                barberUnavailable:
+                  value:
+                    success: false
+                    error:
+                      code: "BARBER_UNAVAILABLE"
+                      message: "Barber is not available at the selected time"
+
+  /appointment/confirmation:
+    post:
+      summary: Send appointment confirmation email
+      description: Sends a confirmation email to the customer with appointment details using nodemailer with Gmail SMTP. The email includes appointment details, barber information, service details, and confirmation code.
+      operationId: sendAppointmentConfirmation
+      tags:
+        - Appointments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmationEmailRequest'
+            example:
+              appointmentId: "507f1f77bcf86cd799439011"
+      responses:
+        '200':
+          description: Confirmation email sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationEmailSuccessResponse'
+              example:
+                success: true
+                data:
+                  success: true
+                  appointmentId: "507f1f77bcf86cd799439011"
+                  emailSent: true
+                  sentAt: "2025-01-10T14:30:00.000Z"
+                  messageId: "<message-id-from-gmail>"
+                message: "Confirmation email sent successfully"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              example:
+                success: false
+                error:
+                  code: "VALIDATION_ERROR"
+                  message: "Invalid input data"
+                  details:
+                    - field: "appointmentId"
+                      message: "Appointment ID is required"
+        '404':
+          description: Appointment, barber, or service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                appointmentNotFound:
+                  value:
+                    success: false
+                    error:
+                      code: "APPOINTMENT_NOT_FOUND"
+                      message: "Appointment not found"
+                barberNotFound:
+                  value:
+                    success: false
+                    error:
+                      code: "BARBER_NOT_FOUND"
+                      message: "Barber not found"
+                serviceNotFound:
+                  value:
+                    success: false
+                    error:
+                      code: "SERVICE_NOT_FOUND"
+                      message: "Service not found"
+        '500':
+          description: Email sending failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: "EMAIL_SEND_FAILED"
+                  message: "Failed to send confirmation email"
+
+components:
+  schemas:
+    Barber:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the barber
+          example: 1
+        name:
+          type: string
+          description: Name of the barber
+          example: "Guilherme"
+        specialty:
+          type: string
+          description: Specialization of the barber
+          example: "Cortes Clássicos & Barba Tradicional"
+        bio:
+          type: string
+          description: Biography of the barber
+          example: "Com um olho para detalhes, Guilherme combina técnicas tradicionais com um toque moderno para criar o visual perfeito."
+        imageUrl:
+          type: string
+          format: uri
+          description: URL of the barber's profile image
+          example: "https://d39p7gjvbgwtet.cloudfront.net/Pessoas/120x120/p_foto_000328516.jpg?v=20250204143100"
+      required:
+        - id
+        - name
+        - specialty
+        - bio
+        - imageUrl
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the service
+          example: 1
+        name:
+          type: string
+          description: Name of the service
+          example: "Apenas Barba"
+        price:
+          type: number
+          format: float
+          description: Price of the service in the local currency
+          example: 45
+        duration:
+          type: integer
+          description: Duration of the service in minutes
+          example: 30
+        category:
+          type: string
+          description: Category of the service
+          example: "Barba"
+      required:
+        - id
+        - name
+        - price
+        - duration
+        - category
+
+    CreateAppointmentRequest:
+      type: object
+      required:
+        - barberId
+        - serviceId
+        - date
+        - time
+        - customerName
+        - customerEmail
+        - customerWhatsapp
+        - paymentMethod
+      properties:
+        barberId:
+          type: integer
+          description: Valid barber ID
+          example: 4
+        serviceId:
+          type: integer
+          description: Valid service ID
+          example: 7
+        date:
+          type: string
+          format: date
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          description: Date in YYYY-MM-DD format, must be in the future
+          example: "2025-01-15"
+        time:
+          type: string
+          pattern: '^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$'
+          description: Time in HH:MM AM/PM format
+          example: "10:30 AM"
+        customerName:
+          type: string
+          minLength: 3
+          maxLength: 100
+          description: Customer name (3-100 characters)
+          example: "João Silva"
+        customerEmail:
+          type: string
+          format: email
+          description: Valid email address
+          example: "joao.silva@email.com"
+        customerWhatsapp:
+          type: string
+          description: Phone number format
+          example: "(11) 98765-4321"
+        paymentMethod:
+          type: string
+          enum: [later, now]
+          description: Payment method - either "later" or "now"
+          example: "later"
+
+    AppointmentBarber:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 4
+        name:
+          type: string
+          example: "Luiz \"Pépe\""
+        specialty:
+          type: string
+          example: "Expert em Cabelo & Barba"
+      required:
+        - id
+        - name
+        - specialty
+
+    AppointmentService:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        name:
+          type: string
+          example: "Combo 1 (Cabelo e Barba)"
+        price:
+          type: number
+          format: float
+          example: 80
+        duration:
+          type: integer
+          example: 75
+      required:
+        - id
+        - name
+        - price
+        - duration
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Appointment ID
+          example: "123"
+        barber:
+          $ref: '#/components/schemas/AppointmentBarber'
+        service:
+          $ref: '#/components/schemas/AppointmentService'
+        date:
+          type: string
+          format: date
+          example: "2025-01-15"
+        time:
+          type: string
+          example: "10:30 AM"
+        customerName:
+          type: string
+          example: "João Silva"
+        customerEmail:
+          type: string
+          format: email
+          example: "joao.silva@email.com"
+        customerWhatsapp:
+          type: string
+          example: "(11) 98765-4321"
+        paymentMethod:
+          type: string
+          enum: [later, now]
+          example: "later"
+        status:
+          type: string
+          example: "confirmed"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-10T14:30:00Z"
+        confirmationCode:
+          type: string
+          example: "ABC123"
+      required:
+        - id
+        - barber
+        - service
+        - date
+        - time
+        - customerName
+        - customerEmail
+        - customerWhatsapp
+        - paymentMethod
+        - status
+        - createdAt
+        - confirmationCode
+
+    AppointmentSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Appointment'
+        message:
+          type: string
+          example: "Appointment created successfully"
+      required:
+        - success
+        - data
+        - message
+
+    ValidationErrorDetail:
+      type: object
+      properties:
+        field:
+          type: string
+          example: "customerEmail"
+        message:
+          type: string
+          example: "Invalid email format"
+      required:
+        - field
+        - message
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              example: "Invalid input data"
+            details:
+              type: array
+              items:
+                $ref: '#/components/schemas/ValidationErrorDetail'
+          required:
+            - code
+            - message
+            - details
+      required:
+        - success
+        - error
+
+    TimeSlotsRequest:
+      type: object
+      required:
+        - date
+        - barberId
+      properties:
+        date:
+          type: string
+          format: date
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          description: Date in YYYY-MM-DD format, must be in the future
+          example: "2025-01-15"
+        barberId:
+          type: integer
+          description: Barber ID
+          example: 4
+        serviceId:
+          type: integer
+          description: Service ID (optional). If provided, slots will be calculated based on the service duration. If not provided, default 30-minute slots will be used.
+          example: 7
+
+    TimeSlotsSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+              example: "2025-01-15"
+            availableSlots:
+              type: array
+              items:
+                type: string
+                pattern: '^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$'
+                description: Time slot in HH:MM AM/PM format
+                example: "09:00 AM"
+          required:
+            - date
+            - availableSlots
+      required:
+        - success
+        - data
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Barber'
+          description: Array of barbers
+      required:
+        - success
+        - data
+
+    ServicesSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+          description: Array of services
+      required:
+        - success
+        - data
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code
+              example: "BARBERS_NOT_FOUND"
+            message:
+              type: string
+              description: Error message
+              example: "No barbers available"
+          required:
+            - code
+            - message
+      required:
+        - success
+        - error
+
+    ConfirmationEmailRequest:
+      type: object
+      required:
+        - appointmentId
+      properties:
+        appointmentId:
+          type: string
+          description: Appointment ID (MongoDB ObjectId)
+          example: "507f1f77bcf86cd799439011"
+
+    ConfirmationEmailSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            appointmentId:
+              type: string
+              example: "507f1f77bcf86cd799439011"
+            emailSent:
+              type: boolean
+              example: true
+            sentAt:
+              type: string
+              format: date-time
+              example: "2025-01-10T14:30:00Z"
+            messageId:
+              type: string
+              description: Message ID returned by email service (nodemailer/Gmail)
+              example: "<message-id-from-gmail>"
+          required:
+            - success
+            - appointmentId
+            - emailSent
+            - sentAt
+            - messageId
+        message:
+          type: string
+          example: "Confirmation email sent successfully"
+      required:
+        - success
+        - data
+        - message
+
+tags:
+  - name: Barbers
+    description: Operations related to barbers
+  - name: Services
+    description: Operations related to services
+  - name: Time Slots
+    description: Operations related to time slot availability
+  - name: Appointments
+    description: Operations related to appointments
+

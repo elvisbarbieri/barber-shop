@@ -1,0 +1,34 @@
+[
+    {
+      "categoryName": "Barba",
+      "services": [
+        { "id": 1, "name": "Apenas Barba", "price": 45, "duration": 30 },
+        { "id": 2, "name": "Barba + Sobrancelha", "price": 55, "duration": 40 },
+        { "id": 3, "name": "Barba + Sobrancelha C/ Risco", "price": 60, "duration": 45 }
+      ]
+    },
+    {
+      "categoryName": "Cabelo",
+      "services": [
+        { "id": 4, "name": "Apenas Cabelo", "price": 45, "duration": 45 },
+        { "id": 5, "name": "Cabelo + Sobrancelha", "price": 55, "duration": 55 },
+        { "id": 6, "name": "Cabelo + Sobrancelha C/ Risco", "price": 60, "duration": 60 }
+      ]
+    },
+    {
+      "categoryName": "Combos",
+      "services": [
+        { "id": 7, "name": "Combo 1 (Cabelo e Barba)", "price": 80, "duration": 75 },
+        { "id": 8, "name": "Combo 2 (Cabelo + Barba + Sobrancelha)", "price": 90, "duration": 85 },
+        { "id": 9, "name": "Combo 3 (Cabelo + Barba + Sobrancelha + Risco)", "price": 95, "duration": 90 }
+      ]
+    },
+    {
+      "categoryName": "Sobrancelha",
+      "services": [
+        { "id": 10, "name": "Apenas Sobrancelha", "price": 10, "duration": 15 },
+        { "id": 11, "name": "Sobrancelha + Risco", "price": 15, "duration": 20 }
+      ]
+    }
+]
+
