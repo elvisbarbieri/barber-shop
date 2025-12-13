@@ -65,3 +65,9 @@ deploy-*.sh
 *secret*
 *password*
 *credential*
+
+# Azure deployment files (keep bicep, ignore state files)
+*.deploy.log
+*.deploystatus
+*.parameters.json
+!infrastructure/parameters.*.bicepparam
