@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { app } = require('@azure/functions');
 const {BarberHandler} = require('../handlers/BarberHandler');
 const {BarberService} = require('../services/BarberService');

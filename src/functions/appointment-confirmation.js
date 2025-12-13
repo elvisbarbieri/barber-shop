@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { app } = require('@azure/functions');
 const {AppointmentConfirmationHandler} = require('../handlers/AppointmentConfirmationHandler');
 const {AppointmentService} = require('../services/AppointmentService');

@@ -27,6 +27,10 @@ src/local.settings.json
 
 node_modules
 dist
+*.log
+.env
+.env.local
+.env.*.local
 
 # Local python packages
 .python_packages/

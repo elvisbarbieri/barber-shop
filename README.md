@@ -17,6 +17,7 @@ A RESTful API built with Azure Functions for managing barbers, services, appoint
 - **Database**: Azure Cosmos DB (MongoDB API)
 - **Email Service**: Nodemailer with Gmail SMTP
 - **API Documentation**: OpenAPI 3.0.3 (Swagger)
+- **Environment Management**: dotenv
 
 ## Project Structure
 
@@ -32,7 +33,8 @@ distrito-barbearia/
 ├── swagger.yaml            # API documentation
 ├── host.json              # Azure Functions host configuration
 ├── package.json           # Dependencies
-└── local.settings.json    # Local environment variables (gitignored)
+├── .env.example           # Environment variables template
+└── .env                   # Local environment variables (gitignored - copy from .env.example)
 ```
 
 ## Prerequisites
@@ -57,13 +59,15 @@ npm install
 
 3. Configure environment variables:
 ```bash
-cp local.settings.example.json local.settings.json
+cp .env.example .env
 ```
 
-Edit `local.settings.json` with your credentials:
+Edit `.env` file with your credentials:
 - `COSMOS_CONNECTION_STRING`: Your Azure Cosmos DB connection string
 - `GMAIL_USER`: Your Gmail address
 - `GMAIL_APP_PASSWORD`: Your Gmail app password (generate from Google Account settings)
+- `DATABASE`: Database name (default: distrito-barber)
+- `COLLECTION_CHECKIN`: Collection name (default: distritobarber)
 
 ## Getting Gmail App Password
 
@@ -294,13 +298,29 @@ func azure functionapp publish <your-function-app-name>
 
 ## Environment Variables
 
-Required environment variables (configure in Azure Portal or `local.settings.json`):
+Required environment variables:
 
+**For Local Development:**
+Create a `.env` file in the root directory (copy from `.env.example`):
+```env
+COSMOS_CONNECTION_STRING=your-connection-string
+GMAIL_USER=your-email@gmail.com
+GMAIL_APP_PASSWORD=your-app-password
+DATABASE=distrito-barber
+COLLECTION_CHECKIN=distritobarber
+```
+
+**For Azure Functions:**
+Configure in Azure Portal → Function App → Configuration → Application settings:
 - `COSMOS_CONNECTION_STRING`: Azure Cosmos DB connection string
 - `GMAIL_USER`: Gmail address for sending emails
 - `GMAIL_APP_PASSWORD`: Gmail app password
+- `DATABASE`: Database name
+- `COLLECTION_CHECKIN`: Collection name
 - `AzureWebJobsStorage`: Azure Storage connection string (for Azure Functions)
 - `FUNCTIONS_WORKER_RUNTIME`: Set to "node"
+
+**Note:** The `.env` file is gitignored and will not be committed to the repository. Always use `.env.example` as a template.
 
 ## Logging
 
