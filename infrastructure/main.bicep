@@ -41,14 +41,11 @@ module functionApp './modules/functionApp.bicep' = {
   ]
 }
 
-module apiManagement './modules/apiManagement.bicep' = {
-  name: 'apiManagement'
-  params: {
-    name: apimServiceName
-    location: location
-    baseUrl: apimBaseUrl
-  }
+resource apiManagementService 'Microsoft.ApiManagement/service@2023-05-01-preview' existing = {
+  name: apimServiceName
 }
+
+var apimGatewayUrl = 'https://${apimServiceName}.azure-api.net'
 
 module apimBackend './modules/apimBackend.bicep' = {
   name: 'apimBackend'
@@ -60,7 +57,6 @@ module apimBackend './modules/apimBackend.bicep' = {
   }
   dependsOn: [
     functionApp
-    apiManagement
   ]
 }
 
@@ -73,14 +69,12 @@ module apimApis './modules/apimApis.bicep' = {
   }
   dependsOn: [
     apimBackend
-    functionApp
   ]
 }
 
 output functionAppName string = functionApp.outputs.functionAppName
 output functionAppUrl string = functionApp.outputs.functionAppUrl
-output apimServiceName string = apiManagement.outputs.apimServiceName
-output apimGatewayUrl string = apiManagement.outputs.gatewayUrl
-output apimPortalUrl string = apiManagement.outputs.portalUrl
+output apimServiceName string = apimServiceName
+output apimGatewayUrl string = apimGatewayUrl
 output apimBaseUrl string = apimBaseUrl
 

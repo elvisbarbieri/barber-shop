@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.39.26.7824",
-      "templateHash": "5373357346405448911"
+      "templateHash": "11649301600801275788"
     }
   },
   "parameters": {
@@ -29,7 +29,8 @@
     "storageAccountName": "[format('{0}{1}', variables('storageAccountPrefix'), variables('storageAccountSuffix'))]",
     "appServicePlanName": "[format('{0}-plan-{1}', parameters('projectName'), parameters('environment'))]",
     "apimServiceName": "[format('{0}-apim-{1}', parameters('projectName'), parameters('environment'))]",
-    "apimBaseUrl": "[parameters('projectName')]"
+    "apimBaseUrl": "[parameters('projectName')]",
+    "apimGatewayUrl": "[format('https://{0}.azure-api.net', variables('apimServiceName'))]"
   },
   "resources": [
     {
@@ -300,134 +301,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "apiManagement",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "name": {
-            "value": "[variables('apimServiceName')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "baseUrl": {
-            "value": "[variables('apimBaseUrl')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.39.26.7824",
-              "templateHash": "9889256041527334760"
-            }
-          },
-          "parameters": {
-            "name": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "baseUrl": {
-              "type": "string"
-            },
-            "publisherName": {
-              "type": "string",
-              "defaultValue": "Distrito Barbearia"
-            },
-            "publisherEmail": {
-              "type": "string",
-              "defaultValue": "admin@distritobarbearia.com"
-            },
-            "sku": {
-              "type": "string",
-              "defaultValue": "Consumption"
-            },
-            "skuCount": {
-              "type": "int",
-              "defaultValue": 0
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.ApiManagement/service",
-              "apiVersion": "2023-05-01-preview",
-              "name": "[parameters('name')]",
-              "location": "[parameters('location')]",
-              "sku": {
-                "name": "[parameters('sku')]",
-                "capacity": "[parameters('skuCount')]"
-              },
-              "properties": {
-                "publisherName": "[parameters('publisherName')]",
-                "publisherEmail": "[parameters('publisherEmail')]",
-                "notificationSenderEmail": "[parameters('publisherEmail')]",
-                "customProperties": {
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "false",
-                  "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "false"
-                }
-              },
-              "identity": {
-                "type": "SystemAssigned"
-              }
-            },
-            {
-              "condition": "[not(equals(parameters('baseUrl'), ''))]",
-              "type": "Microsoft.ApiManagement/service/customDomains",
-              "apiVersion": "2023-05-01-preview",
-              "name": "[format('{0}/{1}', parameters('name'), 'default')]",
-              "properties": {
-                "gatewayDomains": [
-                  {
-                    "domainName": "[format('{0}.azure-api.net', parameters('baseUrl'))]"
-                  }
-                ]
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service', parameters('name'))]"
-              ]
-            }
-          ],
-          "outputs": {
-            "apimServiceName": {
-              "type": "string",
-              "value": "[parameters('name')]"
-            },
-            "apimServiceId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.ApiManagement/service', parameters('name'))]"
-            },
-            "gatewayUrl": {
-              "type": "string",
-              "value": "[format('https://{0}', reference(resourceId('Microsoft.ApiManagement/service', parameters('name')), '2023-05-01-preview').gatewayUrl)]"
-            },
-            "portalUrl": {
-              "type": "string",
-              "value": "[format('https://{0}', reference(resourceId('Microsoft.ApiManagement/service', parameters('name')), '2023-05-01-preview').portalUrl)]"
-            },
-            "managementApiUrl": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('name')), '2023-05-01-preview').managementApiUrl]"
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2025-04-01",
       "name": "apimBackend",
       "properties": {
         "expressionEvaluationOptions": {
@@ -507,7 +380,6 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]",
         "[resourceId('Microsoft.Resources/deployments', 'functionApp')]"
       ]
     },
@@ -645,15 +517,11 @@
     },
     "apimServiceName": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'apiManagement'), '2025-04-01').outputs.apimServiceName.value]"
+      "value": "[variables('apimServiceName')]"
     },
     "apimGatewayUrl": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'apiManagement'), '2025-04-01').outputs.gatewayUrl.value]"
-    },
-    "apimPortalUrl": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'apiManagement'), '2025-04-01').outputs.portalUrl.value]"
+      "value": "[variables('apimGatewayUrl')]"
     },
     "apimBaseUrl": {
       "type": "string",
