@@ -3,7 +3,6 @@
 ## Prerequisites Checklist
 
 - [ ] Azure subscription with contributor permissions
-- [ ] **Subscription quota for Consumption plan** (request if needed - see Troubleshooting section)
 - [ ] Azure CLI installed (`az --version`)
 - [ ] Logged into Azure (`az login`)
 - [ ] Bicep CLI available (`az bicep version`)
@@ -302,37 +301,6 @@ In Function App → CORS:
 2. Function App → Monitoring → Application Insights
 
 ## Troubleshooting
-
-### Subscription Quota Error for Consumption Plan
-
-**Error:** `SubscriptionIsOverQuotaForSku - Current Limit (Dynamic VMs): 0`
-
-**Cause:** Your Azure subscription doesn't have quota allocated for Consumption plan (Dynamic VMs).
-
-**Solution - Request Quota Increase:**
-
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Navigate to: **Subscriptions** → Select your subscription
-3. Click **Usage + quotas** in the left menu
-4. Filter by:
-   - **Provider:** `Microsoft.Compute`
-   - **Location:** `eastus` (or your selected region)
-   - **Resource:** Search for "Dynamic VMs" or "Standard BS Family vCPUs"
-5. Click **Request increase**
-6. Enter:
-   - **New limit:** At least `10` (recommended for production)
-   - **Request reason:** "Azure Functions Consumption Plan"
-7. Click **Submit**
-
-**Wait Time:** Usually approved within 24 hours, often faster.
-
-**Alternative:** Use a different Azure subscription that already has Consumption plan quota.
-
-### Storage Account Name Too Long
-
-**Error:** `AccountNameInvalid - Storage account name must be between 3 and 24 characters`
-
-**Status:** ✅ Fixed in the latest template version. The storage account name is now automatically truncated to fit within 24 characters.
 
 ### Function App Not Deploying
 
