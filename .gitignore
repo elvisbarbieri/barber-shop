@@ -71,3 +71,11 @@ deploy-*.sh
 *.deploystatus
 *.parameters.json
 !infrastructure/parameters.*.bicepparam
+
+# Documentation in infrastructure (kept locally, ignored in git)
+infrastructure/README.md
+infrastructure/DEPLOYMENT.md
+infrastructure/QUICK_START.md
+infrastructure/HOW_TO_DEPLOY.md
+infrastructure/MAIN_BICEP_EXPLAINED.md
+infrastructure/APIM_STRUCTURE.md
